@@ -1,8 +1,10 @@
 ﻿using MetroSuite;
-using OpenAI_API;
 using System;
 using System.IO;
 using System.Windows.Forms;
+using OpenAI_API;
+using OpenAI_API.Chat;
+using OpenAI_API.Models;
 
 public partial class MainForm : MetroForm
 {
@@ -16,8 +18,8 @@ public partial class MainForm : MetroForm
         "Lingua del testo output: $OUTPUT_LANGUAGE\r\n" +
         "Testo sorgente: \"$SOURCE_TEXT\"";
 
-    private OpenAIAPI api;
-    private OpenAI_API.Chat.Conversation conversation;
+    private OpenAIAPI _api;
+    private Conversation _chat;
 
     public MainForm()
     {
@@ -29,9 +31,11 @@ public partial class MainForm : MetroForm
         if (File.Exists("openai_api_key.txt"))
         {
             string openaiApiKey = File.ReadAllText("openai_api_key.txt");
-            api = new OpenAIAPI(openaiApiKey);
-            conversation = api.Chat.CreateConversation(new OpenAI_API.Chat.ChatRequest() { Model = "gpt-3.5-turbo" });
-            conversation.AppendSystemMessage(_initialPrompt);
+            _api = new OpenAIAPI(openaiApiKey);
+            _chat = _api.Chat.CreateConversation();
+            _chat.Model = Model.GPT4_Turbo;
+            _chat.RequestParameters.Temperature = 1.0;
+            _chat.AppendSystemMessage(_initialPrompt);
         }
         else
         {
@@ -58,8 +62,8 @@ public partial class MainForm : MetroForm
 
     private async void Translate(string languagePrompt)
     {
-        conversation.AppendUserInput(languagePrompt);
-        string outputResult = await conversation.GetResponseFromChatbotAsync();
+        _chat.AppendUserInput(languagePrompt);
+        string outputResult = await _chat.GetResponseFromChatbotAsync();
 
         if (outputResult.StartsWith("\"") && outputResult.EndsWith("\""))
         {

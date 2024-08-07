@@ -482,7 +482,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.State = MetroSuite.MetroForm.FormState.Normal;
             this.Style = MetroSuite.Design.Style.Dark;
-            this.Text = "CtxTranslator";
+            this.Text = "CtxTranslator | Made by https://github.com/GabryB03/";
             this.ResumeLayout(false);
 
     }
